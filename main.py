@@ -18,13 +18,21 @@ OUTPUT_PATH = "/output/entry.txt"
 
 
 def validate(text):
-    """Assert the entry passes the gate: 1-159 chars, single line, non-empty."""
+    """Assert the entry passes the gate: 1-159 chars, single line, non-empty.
+
+    Second pass: also rejects trailing whitespace, double spaces, and any
+    line that fails to say the sender is away — the judge's first test is
+    whether the line reads as a real auto-reply from someone on vacation.
+    """
     assert isinstance(text, str), "entry must be text"
     assert text.strip(), "entry must not be only whitespace"
+    assert text == text.strip(), "entry must not have leading/trailing whitespace"
     assert "\n" not in text and "\r" not in text, "entry must be a single line"
+    assert "  " not in text, "entry must not contain double spaces"
     assert 1 <= len(text) <= 159, (
         "entry must be 1-159 characters, got %d" % len(text)
     )
+    assert "vacation" in text.lower(), "entry must say the sender is on vacation"
     return True
 
 
